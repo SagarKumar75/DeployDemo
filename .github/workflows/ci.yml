@@ -42,10 +42,19 @@ jobs:
       - name: Build and Push Docker image
         run: |
           IMAGE_NAME=${{secrets.DOCKER_USERNAME}}/deploydemo
-          docker build -t $IMAGE_NAME:latest .
-          docker tag $IMAGE_NAME:latest $IMAGE_NAME:{{ github.sha}}
-          docker push $IMAGE_NAME:latest
-          docker push $IMAGE_NAME:${{ github.sha }}
+          IMAGE_TAG=latest
+          SHA_TAG=${{ github.sha }}
+          
+          echo "Building Docker image..."
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          
+          echo "Tagging Docker image with SHA..."
+          docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$SHA_TAG
+          
+          echo "Pushing images..."
+          
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          docker push $IMAGE_NAME:$SHA_TAG
           
           
           
